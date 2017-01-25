@@ -3,6 +3,7 @@ package com.nbot.communicators;
 import com.nbot.core.CommandBuffer;
 import com.nbot.core.Command;
 import com.nbot.utils.HttpsHandler;
+import com.nbot.utils.JSONextension;
 
 import org.json.*;
 
