@@ -4,7 +4,7 @@ import org.json.*;
 
 public final class JSONextension {
 	
-	public String getOptionalField(JSONObject obj, String key){
+	public static String getOptionalField(JSONObject obj, String key){
 		try{
 			return obj.get(key).toString();
 		}
@@ -13,7 +13,7 @@ public final class JSONextension {
 		}
 	}
 	
-	public String getOptionalField(String obj, String key){
+	public static String getOptionalField(String obj, String key){
 		JSONObject json = new JSONObject(obj);
 		try{
 			return json.get(key).toString();
@@ -23,7 +23,7 @@ public final class JSONextension {
 		}
 	}
 	
-	public JSONObject getOptionalObject(JSONObject obj, String key){
+	public static JSONObject getOptionalObject(JSONObject obj, String key){
 		try{
 			return obj.getJSONObject(key);
 		}
@@ -32,7 +32,7 @@ public final class JSONextension {
 		}
 	}
 	
-	public JSONObject getOptionalObject(String obj, String key){
+	public static JSONObject getOptionalObject(String obj, String key){
 		JSONObject json = new JSONObject(obj);
 		try{
 			return json.getJSONObject(key);
