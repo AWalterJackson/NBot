@@ -1,13 +1,14 @@
 {
-    "comments": "This is an example config file that shows the fields that may be expected by NBot including security tokens for various APIs and whether to load certain modules or not"
+    "comments":"This is an example config file that shows the fields that may be expected by NBot including security tokens for various APIs and whether to load certain modules or not",
 	"load_clients":{
 		"discord":false,
 		"telegram":true,
-	}
+	},
 	"load_external_modules":{
 		"wolfram":false
-	}
+	},
 	"telegram_config":{
-		"token":"XXXX"
+		"token":"XXXX",
+        "master":"@Nantangitan"
 	}
 }

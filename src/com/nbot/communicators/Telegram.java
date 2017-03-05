@@ -12,14 +12,15 @@ import org.json.*;
 
 public class Telegram extends Thread {
 	private final String CLIENT_NAME = "TELEGRAM";
+	private String token;
 	private CommandBuffer commandbuffer;
-	private HttpsHandler https;
 	private ArrayList<Response> responses;
 	private volatile boolean stayalive;
 
-	public Telegram(CommandBuffer cb) {
+	public Telegram(CommandBuffer cb, String token) {
 		this.commandbuffer = cb;
-		this.https = new HttpsHandler();
+		//this.https = new HttpsHandler();
+		this.token = token;
 		this.stayalive = true;
 	}
 
@@ -49,7 +50,7 @@ public class Telegram extends Thread {
 		} else {
 			messagedetail = "";
 		}
-		messagecommand = messagetokens[0];
+		messagecommand = messagetokens[0].split("@",2)[0];
 
 		return new Command(CLIENT_NAME, senderid, messagecommand, messagedetail);
 	}
@@ -67,7 +68,7 @@ public class Telegram extends Thread {
 
 		try {
 			JSONObject response = new JSONObject(
-					https.httpsget("https://api.telegram.org/bot306018202:AAF45bD-TJn3g9rtf_pv7yIvmQLvi8sFJGU/getMe"));
+					HttpsHandler.httpsget("https://api.telegram.org/bot"+token+"/getMe"));
 			if (response.getBoolean("ok")) {
 				System.out.println("Telegram API connection established");
 			}
@@ -76,8 +77,8 @@ public class Telegram extends Thread {
 			System.out.println("BOT NAME: " + response.get("first_name").toString());
 
 			while (stayalive) {
-				response = new JSONObject(https.httpsget(
-						"https://api.telegram.org/bot306018202:AAF45bD-TJn3g9rtf_pv7yIvmQLvi8sFJGU/getupdates?offset="
+				response = new JSONObject(HttpsHandler.httpsget(
+						"https://api.telegram.org/bot"+token+"/getupdates?offset="
 								+ offset));
 				//System.out.println(response.get("result").toString());
 				if (response.getBoolean("ok")) {
@@ -101,8 +102,8 @@ public class Telegram extends Thread {
 				if (responses.size() > 0) {
 					for (int i = 0; i < responses.size(); i++) {
 						Response current = responses.get(i);
-						https.httpspost(
-								"https://api.telegram.org/bot306018202:AAF45bD-TJn3g9rtf_pv7yIvmQLvi8sFJGU/sendMessage",
+						HttpsHandler.httpspost(
+								"https://api.telegram.org/bot"+token+"/sendMessage",
 								"application/json", buildResponse(current));
 					}
 				}

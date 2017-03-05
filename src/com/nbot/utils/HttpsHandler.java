@@ -8,14 +8,11 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class HttpsHandler {
-	private final String USER_AGENT = "Mozilla/5.0";
-	private final boolean debug = false;
+public final class HttpsHandler {
+	private static final String USER_AGENT = "Mozilla/5.0";
+	private static final boolean debug = false;
 
-	public HttpsHandler() {
-	}
-
-	public String httpsget(String url) throws Exception {
+	public static String httpsget(String url) throws Exception {
 		// Open connection
 		URL resourcelocator = new URL(url);
 		HttpsURLConnection con = (HttpsURLConnection) resourcelocator.openConnection();
@@ -44,7 +41,7 @@ public class HttpsHandler {
 		return response.toString();
 	}
 
-	public void httpspost(String url, String type, String data) throws Exception {
+	public static void httpspost(String url, String type, String data) throws Exception {
 		// Open Connection
 		URL resourcelocator = new URL(url);
 		HttpsURLConnection con = (HttpsURLConnection) resourcelocator.openConnection();
