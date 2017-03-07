@@ -1,4 +1,5 @@
 bin/
+builds/
 .settings/
 .classpath
 config.json
