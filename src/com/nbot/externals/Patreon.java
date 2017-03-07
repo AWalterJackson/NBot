@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.nbot.core.Command;
 import com.nbot.core.CommandBuffer;
@@ -14,7 +16,7 @@ import com.nbot.core.CommandBuffer;
 public class Patreon extends Thread {
 
 	private final String CLIENT_NAME = "PATREON";
-	private final String SCRIPT_BASE = "bash DISPLAY=:0 python scraper.py ";
+	private final String SCRIPT_BASE = "bash -c \"DISPLAY=:0 python scraper.py ";
 
 	private CommandBuffer cb;
 	private ArrayList<PatreonCreator> creators;
@@ -46,10 +48,16 @@ public class Patreon extends Thread {
 	}
 	
 	private void getdata() throws IOException, InterruptedException{
-		System.out.println(System.getProperty("user.dir")+"\\scrape.bat");
-		Process proc = new ProcessBuilder(System.getProperty("user.dir")+"\\scrape.bat").start();
+		List cmdAndArgs = Arrays.asList("cmd", "/c", "scrape.bat");
+		File dir = new File(System.getProperty("user.dir"));
+
+		ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
+		pb.directory(dir);
+		Process p = pb.start();
+		//System.out.println(System.getProperty("user.dir")+"\\scrape.bat");
+		//Process proc = Runtime.getRuntime().exec("cmd.exe /c scrape.bat", null, System.getProperty("user.dir")+"\\scrape.bat");
 		System.out.println("Waiting");
-		proc.waitFor();
+		p.waitFor();
 		System.out.println("Terminated");
 	}
 
@@ -62,7 +70,7 @@ public class Patreon extends Thread {
 		}
 		PrintWriter printer = new PrintWriter(f);
 		for (PatreonCreator creator : creators) {
-			script = script + SCRIPT_BASE + creator.getname() + " > " + creator.getname() + ".txt\n";
+			script = script + SCRIPT_BASE + creator.getname() + " > " + creator.getname() + ".txt\"\n";
 		}
 		printer.write(script);
 		printer.close();
