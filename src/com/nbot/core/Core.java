@@ -7,6 +7,7 @@ import com.nbot.core.Response;
 import java.util.ArrayList;
 
 import com.nbot.externals.*;
+import com.nbot.utils.NBotlogger;
 import com.nbot.communicators.*;
 
 public class Core {
@@ -16,7 +17,6 @@ public class Core {
 	public static void main(String[] args) throws Exception {
 		CommandBuffer commandbuffer = new CommandBuffer();
 		ArrayList<Command> incoming;
-		ArrayList<Response> outgoing;
 
 		// Load Config
 		BotParams config = new BotParams();
@@ -28,16 +28,14 @@ public class Core {
 		}
 		
 		if (config.loadPatreon()){
-			Patreon pt = new Patreon(commandbuffer, config.getTrackedCreators());
+			Patreon pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
 			pt.start();
 		}
 
 		while (true) {
 			incoming = commandbuffer.pullCommands(CLIENT_NAME);
-			outgoing = new ArrayList<Response>();
 
 			for (int i = 0; i < incoming.size(); i++) {
-				System.out.println("processing");
 				commandbuffer.writeOutgoing(process(incoming.get(i)));
 			}
 			Thread.sleep(3000);
@@ -46,12 +44,16 @@ public class Core {
 
 	private static Response process(Command c) {
 		String com = c.getCommand().toLowerCase();
-		System.out.println(com);
+		NBotlogger.log(CLIENT_NAME, com+" from "+c.getSender()+" via "+c.getClient());
 		switch (com) {
 		case "/commands":
-			return new Response(c.getClient(), c.getSender(), "/commands - This list\n/intro - Learn why NBOT exists");
+			return new Response(c.getClient(), c.getSender(), "/commands - This list\n/intro - Learn why NBOT exists\n/amiright - You're always right");
 		case "/intro":
 			return new Response(c.getClient(), c.getSender(), "My father Nantang'Itan decided one day to see if he could create a chat bot where the core logic was separate from the communication logic. The idea being that a bot built like that could be implemented on new platforms with negligible difficulty.\nThe result is me! :D");
+		case "/amiright":
+			return new Response(c.getClient(), c.getSender(), "You're DAMN right!");
+		case "alert":
+			return new Response("TELEGRAM", c.getSender(), c.getDetails());
 		default:
 			return new Response(c.getClient(), c.getSender(), "Unknown Command.");
 		}

@@ -41,4 +41,25 @@ public final class JSONextension {
 			return new JSONObject("\"nodata\":true");
 		}
 	}
+	
+	public static boolean hasOptionalField(String obj, String key){
+		JSONObject json = new JSONObject(obj);
+		try{
+			json.get("key");
+			return true;
+		}
+		catch(JSONException e){
+			return false;
+		}
+	}
+	
+	public static boolean hasOptionalField(JSONObject json, String key){
+		try{
+			json.get(key);
+			return true;
+		}
+		catch(JSONException e){
+			return false;
+		}
+	}
 }

@@ -1,2 +1,6 @@
 Dependencies:
-	JSON-Java - https://github.com/stleary/JSON-java
+    CORE:
+        JSON-Java - https://github.com/stleary/JSON-java
+    Patreon:
+        Python 2.7.x - https://python.org/
+        PythonQt4 - https://pypi.python.org/pypi/PyQt4

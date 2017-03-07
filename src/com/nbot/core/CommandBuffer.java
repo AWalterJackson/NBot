@@ -2,7 +2,12 @@ package com.nbot.core;
 
 import java.util.ArrayList;
 
+import com.nbot.utils.NBotlogger;
+
 public class CommandBuffer extends Thread{
+	
+	private static final String CLIENT_NAME = "COMMAND BUFFER";
+	
 	private volatile String incomeaccessor;
 	private volatile String outgoaccessor;
 	private ArrayList<Command> incoming;
@@ -45,7 +50,6 @@ public class CommandBuffer extends Thread{
 	
 	public void writeIncoming(Command inc){
 		getIncomingLock(inc.getClient());
-		System.out.println("WriteIncoming");
 		this.incoming.add(inc.clone());
 		releaseIncomingLock(inc.getClient());
 	}
@@ -75,7 +79,7 @@ public class CommandBuffer extends Thread{
 	private boolean getIncomingLock(String client){
 		while(this.incomeaccessor != "none" && this.incomeaccessor != client){}
 		this.incomeaccessor = client;
-		System.out.println("IncomingLock given to "+client);
+		NBotlogger.log(CLIENT_NAME, "Incoming locked by "+client);
 		return true;
 	}
 	
@@ -92,7 +96,7 @@ public class CommandBuffer extends Thread{
 	private boolean getOutgoingLock(String client){
 		while(this.outgoaccessor != "none" && this.outgoaccessor != client){}
 		this.outgoaccessor = client;
-		System.out.println("OutgoingLock given to "+client);
+		NBotlogger.log(CLIENT_NAME, "Outgoing locked by "+client);
 		return true;
 	}
 	

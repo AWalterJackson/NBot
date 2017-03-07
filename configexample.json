@@ -6,9 +6,18 @@
 	},
 	"load_external_modules":{
 		"wolfram":false
+        "patreon":true
 	},
 	"telegram_config":{
 		"token":"XXXX",
         "master":"@Nantangitan"
-	}
+	},
+    "patreon_config":{
+        creators:{
+        [
+            {"name":"creator",[1000,2000]},
+            {"name":"creator2",[2000,3000]}
+        ]
+        }
+    }
 }

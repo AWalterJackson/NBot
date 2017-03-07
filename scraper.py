@@ -1,11 +1,8 @@
-import sys
-import getopt
+import sys  
 from PyQt4.QtGui import *  
 from PyQt4.QtCore import *  
 from PyQt4.QtWebKit import *  
-from lxml import html 
-
-#Take this class for granted.Just use result of rendering.
+  
 class Render(QWebPage):  
   def __init__(self, url):  
     self.app = QApplication(sys.argv)  
@@ -17,7 +14,7 @@ class Render(QWebPage):
   def _loadFinished(self, result):  
     self.frame = self.mainFrame()  
     self.app.quit()  
-    
+
 def main(u):
 
     url = 'https://patreon.com/'+u+'/'
@@ -29,6 +26,7 @@ def main(u):
 
     prunedresults = []
     keeprunning = True
+    record = False
     index = 0
     indent = -1
     length = len(result)
@@ -41,23 +39,27 @@ def main(u):
             json = True
             prunedresults.append("{")
             index +=1
-            continue
-        if indent > 0:
-            prunedresults.append(line)
-        if "{" in line and json == True:
-            indent +=1
-        if "}" in line and json == True:
-            indent -=1
-        if indent == 0:
-            keeprunning = False
+            while indent > 0:
+                line = result[index]
+                if "{" in line and json == True:
+                    indent +=1
+                if "}" in line and json == True:
+                    indent -=1
+                if(indent == 0):
+                    prunedresults.append("}")
+                else:
+                    prunedresults.append(line)
+                index += 1
             break
-        if index >= length:
-            break
-        index += 1
-
+        else:
+            index += 1
     for lines in prunedresults:
         print lines
-
+    sys.exit()
 if __name__ == "__main__":
-   print sys.argv
    main(sys.argv[1])
+    
+#url = 'https://patreon.com/vempire'  
+#r = Render(url)  
+#html = r.frame.toHtml()
+#print str(html.toAscii())

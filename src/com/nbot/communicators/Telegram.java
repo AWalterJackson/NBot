@@ -5,6 +5,7 @@ import com.nbot.core.Command;
 import com.nbot.core.Response;
 import com.nbot.utils.HttpsHandler;
 import com.nbot.utils.JSONextension;
+import com.nbot.utils.NBotlogger;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,6 @@ public class Telegram extends Thread {
 
 	private String buildResponse(Response message) {
 		String res = "{\"chat_id\":" + message.getRecipient() + ",\"text\":\"" + message.getMessage() + "\"}";
-		//System.out.println(res);
 		return res;
 	}
 
@@ -70,11 +70,11 @@ public class Telegram extends Thread {
 			JSONObject response = new JSONObject(
 					HttpsHandler.httpsget("https://api.telegram.org/bot"+token+"/getMe"));
 			if (response.getBoolean("ok")) {
-				System.out.println("Telegram API connection established");
+				NBotlogger.log(CLIENT_NAME, "Telegram API connection established");
 			}
 			response = response.getJSONObject("result");
-			System.out.println("BOT ID: " + response.get("id").toString());
-			System.out.println("BOT NAME: " + response.get("first_name").toString());
+			NBotlogger.log(CLIENT_NAME, "BOT ID: " + response.get("id").toString());
+			NBotlogger.log(CLIENT_NAME, "BOT NAME: " + response.get("first_name").toString());
 
 			while (stayalive) {
 				response = new JSONObject(HttpsHandler.httpsget(
@@ -111,7 +111,7 @@ public class Telegram extends Thread {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Exception raised in Telegram Communicator.\n");
+			NBotlogger.log(CLIENT_NAME, "Exception raised in Telegram Communicator.\n");
 		}
 	}
 }
