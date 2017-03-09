@@ -76,14 +76,14 @@ public class CommandBuffer extends Thread{
 		return res;
 	}
 	
-	private boolean getIncomingLock(String client){
+	private synchronized boolean getIncomingLock(String client){
 		while(this.incomeaccessor != "none" && this.incomeaccessor != client){}
 		this.incomeaccessor = client;
 		NBotlogger.log(CLIENT_NAME, "Incoming locked by "+client);
 		return true;
 	}
 	
-	private boolean releaseIncomingLock(String client){
+	private synchronized boolean releaseIncomingLock(String client){
 		if(this.incomeaccessor == client){
 			this.incomeaccessor = "none";
 			return true;
@@ -93,14 +93,14 @@ public class CommandBuffer extends Thread{
 		}
 	}
 	
-	private boolean getOutgoingLock(String client){
+	private synchronized boolean getOutgoingLock(String client){
 		while(this.outgoaccessor != "none" && this.outgoaccessor != client){}
 		this.outgoaccessor = client;
 		NBotlogger.log(CLIENT_NAME, "Outgoing locked by "+client);
 		return true;
 	}
 	
-	private boolean releaseOutgoingLock(String client){
+	private synchronized boolean releaseOutgoingLock(String client){
 		if(this.outgoaccessor == client){
 			this.outgoaccessor = "none";
 			return true;

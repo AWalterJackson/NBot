@@ -52,6 +52,8 @@ public class Core {
 			return new Response(c.getClient(), c.getSender(), "My father Nantang'Itan decided one day to see if he could create a chat bot where the core logic was separate from the communication logic. The idea being that a bot built like that could be implemented on new platforms with negligible difficulty.\nThe result is me! :D");
 		case "/amiright":
 			return new Response(c.getClient(), c.getSender(), "You're DAMN right!");
+		case "/status":
+			return new Response(c.getClient(), c.getSender(), "System running.");
 		case "alert":
 			return new Response("TELEGRAM", c.getSender(), c.getDetails());
 		default:
