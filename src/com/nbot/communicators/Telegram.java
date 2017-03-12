@@ -7,6 +7,7 @@ import com.nbot.utils.HttpsHandler;
 import com.nbot.utils.JSONextension;
 import com.nbot.utils.NBotlogger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.*;
@@ -20,7 +21,6 @@ public class Telegram extends Thread {
 
 	public Telegram(CommandBuffer cb, String token) {
 		this.commandbuffer = cb;
-		//this.https = new HttpsHandler();
 		this.token = token;
 		this.stayalive = true;
 	}
@@ -60,6 +60,10 @@ public class Telegram extends Thread {
 		String res = "{\"chat_id\":" + message.getRecipient() + ",\"text\":\"" + message.getMessage() + "\"}";
 		return res;
 	}
+	
+	public String getClient(){
+		return this.CLIENT_NAME;
+	}
 
 	public void run() {
 		long offset = 0;
@@ -80,9 +84,7 @@ public class Telegram extends Thread {
 				response = new JSONObject(HttpsHandler.httpsget(
 						"https://api.telegram.org/bot"+token+"/getupdates?offset="
 								+ offset));
-				//System.out.println(response.get("result").toString());
 				if (response.getBoolean("ok")) {
-					//System.out.println(response);
 					if (JSONextension.getOptionalField(response, "result") != "") {
 						JSONArray updates = response.getJSONArray("result");
 
@@ -109,9 +111,14 @@ public class Telegram extends Thread {
 				}
 				Thread.sleep(3000);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e){
+			NBotlogger.log(CLIENT_NAME, "Telegram API returned fail code.\n");
+			this.commandbuffer.writeError(this, CLIENT_NAME);
+			
+		}
+			catch (Exception e) {
 			NBotlogger.log(CLIENT_NAME, "Exception raised in Telegram Communicator.\n");
+			this.commandbuffer.writeError(this, CLIENT_NAME);
 		}
 	}
 }

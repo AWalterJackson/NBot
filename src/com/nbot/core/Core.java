@@ -10,29 +10,48 @@ import com.nbot.externals.*;
 import com.nbot.utils.NBotlogger;
 import com.nbot.communicators.*;
 
-public class Core {
+public class Core extends Thread{
 
 	private static final String CLIENT_NAME = "CORE";
+	private static final boolean DEBUG_MODE = false;
 
 	public static void main(String[] args) throws Exception {
-		CommandBuffer commandbuffer = new CommandBuffer();
+		CommandBuffer commandbuffer = new CommandBuffer(DEBUG_MODE);
 		ArrayList<Command> incoming;
+		ArrayList<Thread> errs;
+		Telegram tg;
+		Patreon pt;
 
 		// Load Config
 		BotParams config = new BotParams();
 
 		// Start communicator threads
 		if (config.loadTelegram()) {
-			Telegram tg = new Telegram(commandbuffer, config.getTelegramToken());
+			tg = new Telegram(commandbuffer, config.getTelegramToken());
 			tg.start();
 		}
 		
 		if (config.loadPatreon()){
-			Patreon pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
+			pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
 			pt.start();
 		}
 
 		while (true) {
+			//Handle thread restarts
+			errs = commandbuffer.pullErrors(CLIENT_NAME);
+			for(Thread err : errs){
+				if(err.getClass().equals(Telegram.class)){
+					tg = new Telegram(commandbuffer, config.getTelegramToken());
+					tg.start();
+					NBotlogger.log(CLIENT_NAME, "TELEGRAM thread reinitialised");
+				}
+				if(err.getClass().equals(Patreon.class)){
+					pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
+					pt.start();
+					NBotlogger.log(CLIENT_NAME, "PATREON thread reinitialised");
+				}
+			}
+			//Handle command processing
 			incoming = commandbuffer.pullCommands(CLIENT_NAME);
 
 			for (int i = 0; i < incoming.size(); i++) {
