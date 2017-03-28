@@ -110,6 +110,7 @@ public class Patreon extends Thread {
 			response.append(line);
 		}
 		p.waitFor();
+		p.destroy();
 		return response.toString();
 	}
 	

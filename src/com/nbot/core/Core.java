@@ -7,10 +7,11 @@ import com.nbot.core.Response;
 import java.util.ArrayList;
 
 import com.nbot.externals.*;
+import com.nbot.utils.HttpsHandler;
 import com.nbot.utils.NBotlogger;
 import com.nbot.communicators.*;
 
-public class Core extends Thread{
+public class Core extends Thread {
 
 	private static final String CLIENT_NAME = "CORE";
 	private static final boolean DEBUG_MODE = false;
@@ -30,28 +31,28 @@ public class Core extends Thread{
 			tg = new Telegram(commandbuffer, config.getTelegramToken());
 			tg.start();
 		}
-		
-		if (config.loadPatreon()){
+
+		if (config.loadPatreon()) {
 			pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
 			pt.start();
 		}
 
 		while (true) {
-			//Handle thread restarts
+			// Handle thread restarts
 			errs = commandbuffer.pullErrors(CLIENT_NAME);
-			for(Thread err : errs){
-				if(err.getClass().equals(Telegram.class)){
+			for (Thread err : errs) {
+				if (err.getClass().equals(Telegram.class)) {
 					tg = new Telegram(commandbuffer, config.getTelegramToken());
 					tg.start();
 					NBotlogger.log(CLIENT_NAME, "TELEGRAM thread reinitialised");
 				}
-				if(err.getClass().equals(Patreon.class)){
+				if (err.getClass().equals(Patreon.class)) {
 					pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
 					pt.start();
 					NBotlogger.log(CLIENT_NAME, "PATREON thread reinitialised");
 				}
 			}
-			//Handle command processing
+			// Handle command processing
 			incoming = commandbuffer.pullCommands(CLIENT_NAME);
 
 			for (int i = 0; i < incoming.size(); i++) {
@@ -63,7 +64,7 @@ public class Core extends Thread{
 
 	private static Response process(Command c) {
 		String com = c.getCommand().toLowerCase();
-		NBotlogger.log(CLIENT_NAME, com+" from "+c.getSender()+" via "+c.getClient());
+		NBotlogger.log(CLIENT_NAME, com + " from " + c.getSender() + " via " + c.getClient());
 		switch (com) {
 		case "/commands":
 			return new Response(c.getClient(), c.getSender(), "/commands - This list\n/intro - Learn why NBOT exists\n/amiright - You're always right");
@@ -73,6 +74,12 @@ public class Core extends Thread{
 			return new Response(c.getClient(), c.getSender(), "You're DAMN right!");
 		case "/status":
 			return new Response(c.getClient(), c.getSender(), "System running.");
+		case "/getip":
+			try {
+				return new Response(c.getClient(), c.getSender(), HttpsHandler.httpget("http://checkip.amazonaws.com"));
+			} catch (Exception e) {
+				return new Response(c.getClient(), c.getSender(), "I'm sorry, an error occurred communicating with checkip.amazonaw.com, try again in a few minutes.");
+			}
 		case "alert":
 			return new Response("TELEGRAM", c.getSender(), c.getDetails());
 		default:
