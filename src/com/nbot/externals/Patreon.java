@@ -59,7 +59,6 @@ public class Patreon extends Thread {
 			}
 		} catch (IOException e) {
 			NBotlogger.log(CLIENT_NAME, "Error scraping Patreon");
-			e.printStackTrace();
 			this.cb.writeError(this, CLIENT_NAME);
 		} catch (Exception e) {
 			NBotlogger.log(CLIENT_NAME, "General Exception thrown in Patreon Module.");
