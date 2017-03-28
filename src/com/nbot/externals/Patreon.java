@@ -59,6 +59,7 @@ public class Patreon extends Thread {
 			}
 		} catch (IOException e) {
 			NBotlogger.log(CLIENT_NAME, "Error scraping Patreon");
+			e.printStackTrace();
 			this.cb.writeError(this, CLIENT_NAME);
 		} catch (Exception e) {
 			NBotlogger.log(CLIENT_NAME, "General Exception thrown in Patreon Module.");
@@ -93,7 +94,7 @@ public class Patreon extends Thread {
 	}
 	
 	private String getdata(String creator) throws IOException, InterruptedException{
-		List<String> cmdAndArgs = Arrays.asList("C:\\Python27\\python.exe", "scraper.py", creator);
+		List<String> cmdAndArgs = Arrays.asList("python", "scraper.py", creator);
 		File dir = new File(System.getProperty("user.dir"));
 		ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
 		pb.directory(dir);
