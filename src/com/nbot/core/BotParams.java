@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONArray;
@@ -28,6 +29,9 @@ public class BotParams {
 	// Telegram Config
 	private String telegramtoken;
 	private String telegrammaster;
+	
+	//Generic responses
+	private HashMap<String,String> generics;
 
 	public BotParams() {
 		NBotlogger.log(CLIENT_NAME, "Loading Configuration");
@@ -66,6 +70,13 @@ public class BotParams {
 			// TELEGRAM Configuration
 			this.telegramtoken = config.getJSONObject("telegram_config").getString("token");
 			this.telegrammaster = config.getJSONObject("telegram_config").getString("master");
+			
+			//Generate Generics
+			this.generics = new HashMap<String,String>();
+			JSONArray gens = config.getJSONArray("generics");
+			for(int i = 0; i < gens.length(); i++){
+				this.generics.put(gens.getJSONObject(i).getString("command"), gens.getJSONObject(i).getString("response"));
+			}
 		} catch (JSONException e) {
 			NBotlogger.log(CLIENT_NAME, "Malformed JSON in Config");
 			e.printStackTrace();
@@ -96,5 +107,16 @@ public class BotParams {
 
 	public ArrayList<PatreonCreator> getTrackedCreators() {
 		return this.trackedpatreon;
+	}
+	
+	public boolean isGeneric(String obj){
+		if(this.generics.containsKey(obj)){
+			return true;
+		}
+		return false;
+	}
+	
+	public String getGeneric(String obj){
+		return this.generics.get(obj).toString();
 	}
 }

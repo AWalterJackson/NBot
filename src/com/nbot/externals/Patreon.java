@@ -62,6 +62,7 @@ public class Patreon extends Thread {
 			this.cb.writeError(this, CLIENT_NAME);
 		} catch (Exception e) {
 			NBotlogger.log(CLIENT_NAME, "General Exception thrown in Patreon Module.");
+			e.printStackTrace();
 			this.cb.writeError(this, CLIENT_NAME);
 		}
 		return;
@@ -117,20 +118,4 @@ public class Patreon extends Thread {
 	public String getClient(){
 		return this.CLIENT_NAME;
 	}
-
-/*	private void generatescraper(ArrayList<PatreonCreator> creators) throws IOException {
-		String script = "";
-		File f = new File("scrape.bat");
-		if (!f.createNewFile()) {
-			f.delete();
-			f.createNewFile();
-		}
-		PrintWriter printer = new PrintWriter(f);
-		for (PatreonCreator creator : creators) {
-			script = script + SCRIPT_BASE + creator.getname() + " > " + creator.getname() + ".txt\"\n";
-		}
-		printer.write(script);
-		printer.close();
-		return;
-	}*/
 }
