@@ -10,7 +10,7 @@
 	},
 	"telegram_config":{
 		"token":"XXXX",
-        "master":"@Nantangitan"
+        "master":"username"
 	},
     "patreon_config":{
         creators:{
@@ -19,5 +19,11 @@
             {"name":"creator2",[2000,3000]}
         ]
         }
+    },
+    
+    "generics":{
+    [
+        {"command":"/commandin","response":"responseout"}
+    ]
     }
 }
