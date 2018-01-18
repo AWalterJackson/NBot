@@ -5,3 +5,4 @@ builds/
 config.json
 src/IPTest.java
 src/OSTest.java
+src/HTTPSTester.java

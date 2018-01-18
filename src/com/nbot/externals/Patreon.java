@@ -1,16 +1,13 @@
 package com.nbot.externals;
 
+import com.nbot.utils.HttpsHandler;
 import com.nbot.utils.JSONextension;
 import com.nbot.utils.NBotlogger;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,22 +23,32 @@ public class Patreon extends Thread {
 	private ArrayList<PatreonCreator> creators;
 	private String receiver;
 	private boolean stayalive;
+	private Pattern cidpattern;
+	private Pattern numberpattern;
 
 	public Patreon(CommandBuffer cb, ArrayList<PatreonCreator> creators, String receiver) {
 		this.cb = cb;
 		this.creators = creators;
 		this.receiver = receiver;
 		this.stayalive = true;
+		this.cidpattern = Pattern.compile("\"creator_id\": \\d*");
+		this.numberpattern = Pattern.compile("\\d+");
 	}
 
 	public void run() {
 		String pagedata = "";
 		ArrayList<JSONObject> rewards;
+
 		try {
+			NBotlogger.log(CLIENT_NAME, "Initializing");
+			for(PatreonCreator creator : this.creators){
+				creator.setid(retrieveid(creator.getname()));
+				NBotlogger.log(CLIENT_NAME, creator.getname()+ " found with ID: " + creator.getid());
+			}
 			NBotlogger.log(CLIENT_NAME, "Alert module loaded");
 			while (stayalive) {
 				for(PatreonCreator creator : this.creators){
-					pagedata = getdata(creator.getname());
+					pagedata = HttpsHandler.httpsget("https://api.patreon.com/user/"+creator.getid());
 					rewards = getrewards(pagedata);
 					for(int level : creator.getlevels()){
 						for(JSONObject reward : rewards){
@@ -58,6 +65,7 @@ public class Patreon extends Thread {
 				Thread.sleep(300000);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			NBotlogger.log(CLIENT_NAME, "Error scraping Patreon");
 			this.cb.writeError(this, CLIENT_NAME);
 		} catch (Exception e) {
@@ -93,26 +101,17 @@ public class Patreon extends Thread {
 		return rewards;
 	}
 	
-	private String getdata(String creator) throws IOException, InterruptedException{
-		List<String> cmdAndArgs = Arrays.asList("python", "scraper.py", creator);
-		File dir = new File(System.getProperty("user.dir"));
-		ProcessBuilder pb = new ProcessBuilder(cmdAndArgs);
-		pb.directory(dir);
-		
-		NBotlogger.log(CLIENT_NAME, "Getting data for: "+creator);
-		Process p = pb.start();
-		
-		InputStream is = p.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		String line;
-		StringBuffer response = new StringBuffer();
-		while((line = br.readLine()) != null){
-			response.append(line);
+	private String retrieveid(String creator) throws Exception{
+		String pagedata = HttpsHandler.httpsget("https://www.patreon.com/"+creator);
+		Matcher cid = this.cidpattern.matcher(pagedata);
+		if(cid.find()){
+			Matcher value = this.numberpattern.matcher(cid.group(0));
+			value.find();
+			return value.group(0);
 		}
-		p.waitFor();
-		p.destroy();
-		return response.toString();
+		else{
+			throw new Exception();
+		}
 	}
 	
 	public String getClient(){
