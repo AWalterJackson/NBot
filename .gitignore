@@ -3,3 +3,5 @@ builds/
 .settings/
 .classpath
 config.json
+src/IPTest.java
+src/OSTest.java

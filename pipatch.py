@@ -1,3 +1,4 @@
+import sys
 from subprocess import Popen, PIPE
 
 #This file is renamed to scraper.py and calls the normal scraper.py using
