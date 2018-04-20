@@ -106,4 +106,34 @@ public final class HttpsHandler {
 		}
 		return;
 	}
+	
+	public static String httpsgetcookie(String url, String cookiedata) throws Exception{
+		// Open connection
+		URL resourcelocator = new URL(url);
+		HttpsURLConnection con = (HttpsURLConnection) resourcelocator.openConnection();
+
+		// Set Request Type
+		con.setRequestMethod("GET");
+
+		// Set Header Details
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Cookie", cookiedata);
+
+		int responsecode = con.getResponseCode();
+		if (debug) {
+			System.out.println("GET sent to: " + url);
+			System.out.println("Response code: " + responsecode);
+		}
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputline;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputline = in.readLine()) != null) {
+			response.append(inputline);
+		}
+		in.close();
+
+		return response.toString();
+	}
 }

@@ -21,17 +21,20 @@ public class BotParams {
 	// Core chat modules
 	private boolean telegram;
 	private boolean discord;
+	private boolean furaffinity;
 
 	// External modules
 	private boolean patreon;
 	private ArrayList<PatreonCreator> trackedpatreon;
 
+	private String fa_cookie;
+
 	// Telegram Config
 	private String telegramtoken;
 	private String telegrammaster;
-	
-	//Generic responses
-	private HashMap<String,String> generics;
+
+	// Generic responses
+	private HashMap<String, String> generics;
 
 	public BotParams() {
 		NBotlogger.log(CLIENT_NAME, "Loading Configuration");
@@ -55,27 +58,35 @@ public class BotParams {
 
 			// External Modules
 			this.patreon = config.getJSONObject("load_external_modules").getBoolean("patreon");
-			
+
 			JSONArray tcreators = config.getJSONObject("patreon_config").getJSONArray("creators");
 			this.trackedpatreon = new ArrayList<PatreonCreator>();
-			for (int i = 0; i<tcreators.length(); i++) {
+			for (int i = 0; i < tcreators.length(); i++) {
 				PatreonCreator patreoncreator = new PatreonCreator(tcreators.getJSONObject(i).getString("name"));
 				JSONArray levels = tcreators.getJSONObject(i).getJSONArray("levels");
-				for(int j=0; j<levels.length();j++){
+				for (int j = 0; j < levels.length(); j++) {
 					patreoncreator.addLevel(levels.getInt(j));
 				}
 				this.trackedpatreon.add(patreoncreator);
 			}
 
+			//FURAFFINITY Configuration
+			this.furaffinity = config.getJSONObject("load_external_modules").getBoolean("furaffinity");
+			
+			if (this.furaffinity) {
+				this.fa_cookie = config.getJSONObject("furaffinity_config").getString("cookie");
+			}
+
 			// TELEGRAM Configuration
 			this.telegramtoken = config.getJSONObject("telegram_config").getString("token");
 			this.telegrammaster = config.getJSONObject("telegram_config").getString("master");
-			
-			//Generate Generics
-			this.generics = new HashMap<String,String>();
+
+			// Generate Generics
+			this.generics = new HashMap<String, String>();
 			JSONArray gens = config.getJSONArray("generics");
-			for(int i = 0; i < gens.length(); i++){
-				this.generics.put(gens.getJSONObject(i).getString("command"), gens.getJSONObject(i).getString("response"));
+			for (int i = 0; i < gens.length(); i++) {
+				this.generics.put(gens.getJSONObject(i).getString("command"),
+						gens.getJSONObject(i).getString("response"));
 			}
 		} catch (JSONException e) {
 			NBotlogger.log(CLIENT_NAME, "Malformed JSON in Config");
@@ -96,8 +107,8 @@ public class BotParams {
 	public boolean loadTelegram() {
 		return this.telegram;
 	}
-	
-	public String getTelegramMaster(){
+
+	public String getTelegramMaster() {
 		return this.telegrammaster;
 	}
 
@@ -108,15 +119,23 @@ public class BotParams {
 	public ArrayList<PatreonCreator> getTrackedCreators() {
 		return this.trackedpatreon;
 	}
-	
-	public boolean isGeneric(String obj){
-		if(this.generics.containsKey(obj)){
+
+	public boolean isGeneric(String obj) {
+		if (this.generics.containsKey(obj)) {
 			return true;
 		}
 		return false;
 	}
-	
-	public String getGeneric(String obj){
+
+	public String getGeneric(String obj) {
 		return this.generics.get(obj).toString();
+	}
+	
+	public boolean loadFuraffinity(){
+		return this.furaffinity;
+	}
+	
+	public String getFACookie(){
+		return this.fa_cookie;
 	}
 }

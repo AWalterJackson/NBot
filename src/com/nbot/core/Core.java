@@ -18,9 +18,11 @@ public class Core extends Thread {
 	
 	private static int telegramErrors;
 	private static int patreonErrors;
+	private static int furaffinityErrors;
 	
 	private static boolean loadedTG;
 	private static boolean loadedPT;
+	private static boolean loadedFA;
 	
 	private static BotParams config;
 
@@ -30,13 +32,16 @@ public class Core extends Thread {
 		ArrayList<Thread> errs;
 		Telegram tg;
 		Patreon pt;
+		Furaffinity fa;
 		
 		//Error Logging
 		telegramErrors = 0;
 		patreonErrors = 0;
+		furaffinityErrors = 0;
 		
 		loadedTG = false;
 		loadedPT = false;
+		loadedFA = false;
 
 		// Load Config
 		config = new BotParams();
@@ -52,6 +57,12 @@ public class Core extends Thread {
 			pt = new Patreon(commandbuffer, config.getTrackedCreators(), config.getTelegramMaster());
 			pt.start();
 			loadedPT = true;
+		}
+		
+		if(config.loadFuraffinity()){
+			fa = new Furaffinity(commandbuffer, config.getFACookie());
+			fa.start();
+			loadedFA = true;
 		}
 
 		while (true) {
