@@ -112,12 +112,12 @@ public class Telegram extends Thread {
 				Thread.sleep(3000);
 			}
 		} catch (IOException e){
-			NBotlogger.log(CLIENT_NAME, "Telegram API returned fail code.\n");
+			NBotlogger.log(CLIENT_NAME, "Telegram API returned fail code.");
 			this.commandbuffer.writeError(this, CLIENT_NAME);
 			
 		}
 			catch (Exception e) {
-			NBotlogger.log(CLIENT_NAME, "Exception raised in Telegram Communicator.\n");
+			NBotlogger.log(CLIENT_NAME, "Exception raised in Telegram Communicator.");
 			this.commandbuffer.writeError(this, CLIENT_NAME);
 		}
 	}
