@@ -62,7 +62,7 @@ public class Patreon extends Thread {
 						}
 					}
 				}
-				Thread.sleep(300000);
+				Thread.sleep(120000);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
