@@ -64,6 +64,8 @@ public class Patreon extends Thread {
 				}
 				Thread.sleep(120000);
 			}
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			NBotlogger.log(CLIENT_NAME, "Error scraping Patreon");
@@ -72,6 +74,12 @@ public class Patreon extends Thread {
 			NBotlogger.log(CLIENT_NAME, "General Exception thrown in Patreon Module.");
 			e.printStackTrace();
 			this.cb.writeError(this, CLIENT_NAME);
+		} finally {
+			try {
+				Thread.sleep(120000);
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 		return;
 	}

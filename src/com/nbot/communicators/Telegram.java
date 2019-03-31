@@ -109,6 +109,7 @@ public class Telegram extends Thread {
 								"application/json", buildResponse(current));
 					}
 				}
+				commandbuffer.clearResponses(CLIENT_NAME, responses);
 				Thread.sleep(3000);
 			}
 		} catch (IOException e){
@@ -118,7 +119,14 @@ public class Telegram extends Thread {
 		}
 			catch (Exception e) {
 			NBotlogger.log(CLIENT_NAME, "Exception raised in Telegram Communicator.");
+			e.printStackTrace();
 			this.commandbuffer.writeError(this, CLIENT_NAME);
+		} finally {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				return;
+			}
 		}
 	}
 }

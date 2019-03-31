@@ -60,12 +60,16 @@ public class CommandBuffer extends Thread{
 			current = outgoing.get(i);
 			if(current.getClient() == client){
 				res.add(current);
-				outgoing.remove(current);
-				i--;
 			}
 		}
 		releaseOutgoingLock(client);
 		return res;
+	}
+	
+	public void clearResponses(String client, ArrayList<Response> responses) {
+		getOutgoingLock(client);
+		outgoing.removeAll(responses);
+		releaseOutgoingLock(client);
 	}
 	
 	public void writeOutgoing(Response out){
